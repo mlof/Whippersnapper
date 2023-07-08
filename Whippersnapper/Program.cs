@@ -23,6 +23,7 @@ internal class Program
         _client.MessageReceived += MessageReceivedAsync;
 
 
+
         var configuration = new ConfigurationBuilder()
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
             .AddJsonFile("appsettings.json")
@@ -47,16 +48,25 @@ internal class Program
 
 
         _transcriber = new Transcriber(modelPath);
+
+
+        _client.SetActivityAsync(new Game(_whipperSnapperConfiguration.StatusMessage, ActivityType.Listening));
     }
 
     private async Task MessageReceivedAsync(SocketMessage arg)
     {
+        // set status to typing
+
+
         if (arg is SocketUserMessage { Flags: MessageFlags.VoiceMessage } m)
         {
+
             var attachment = m.Attachments.FirstOrDefault();
 
             if (attachment != null)
             {
+                using var typing = arg.Channel.EnterTypingState();
+
                 var sw = Stopwatch.StartNew();
                 var fileName = arg.Id + "-" + attachment.Filename;
                 var filePath = Path.Join(_fileDirectory, fileName);
@@ -76,12 +86,15 @@ internal class Program
                 sw.Stop();
                 var footer = "Transcribed by Whippersnapper in " + sw.ElapsedMilliseconds + "ms";
 
+                content = SanitizeContent(content);
+
 
                 var embedBuilder = new EmbedBuilder()
                     .WithAuthor(arg.Author)
                     .WithDescription(content)
                     .WithColor(Color.Blue)
-                    .WithFooter(footer);
+                    .WithFooter(footer)
+                    ;
 
 
                 await arg.Channel.SendMessageAsync(embed: embedBuilder.Build(), allowedMentions: AllowedMentions.None,
@@ -92,8 +105,23 @@ internal class Program
                     File.Delete(filePath);
                     File.Delete(wavFilePath);
                 }
+
             }
         }
+    }
+
+    private string SanitizeContent(string content)
+    {
+        var badWords = _whipperSnapperConfiguration.BadWords;
+
+        foreach (var badWord in badWords)
+        {
+            content = content.Replace(badWord, new string('█', badWord.Length), StringComparison.OrdinalIgnoreCase);
+        }
+
+        return content;
+
+
     }
 
 
