@@ -50,7 +50,7 @@ internal class Program
         _transcriber = new Transcriber(modelPath);
 
 
-        _client.SetActivityAsync(new Game(_whipperSnapperConfiguration.StatusMessage, ActivityType.Listening));
+        _client.SetActivityAsync(new Game(_whipperSnapperConfiguration.StatusMessage));
     }
 
     private async Task MessageReceivedAsync(SocketMessage arg)
