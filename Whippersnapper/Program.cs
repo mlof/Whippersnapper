@@ -39,6 +39,7 @@ internal class Program
 
         _fileDirectory = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "files");
 
+        Directory.CreateDirectory(_fileDirectory);
         var modelDirectory = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "models");
 
 
