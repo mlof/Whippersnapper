@@ -23,8 +23,6 @@ jobs:
       run: dotnet restore
     - name: Install GitVersion tool
       run: dotnet tool install -g GitVersion.Tool
-    - name: Get version
-      run: dotnet gitversion
     - name: Determine Version
       id: determine-version
       uses: gittools/actions/gitversion/execute@v0
