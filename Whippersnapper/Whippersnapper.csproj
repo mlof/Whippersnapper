@@ -1,37 +1,46 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <TargetFrameworks>net7.0-windows;net7.0-linux</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
 
-  <ItemGroup>
-    <None
-      Remove="C:\Users\Marcel\.nuget\packages\naudio.vorbis\1.5.0\contentFiles\any\netstandard2.0\README.md" />
-  </ItemGroup>
+        <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <UserSecretsId>652c9c20-9f1f-470c-80dd-d67aba3a69af</UserSecretsId>
 
-  <ItemGroup>
-    <PackageReference Include="Concentus" Version="1.1.7" />
-    <PackageReference Include="Concentus.OggFile" Version="1.0.4" />
-    <PackageReference Include="Discord.Net" Version="3.11.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-    <PackageReference Include="NAudio" Version="2.1.0" />
-    <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Whisper.Runtime" Version="1.4.2001" />
-    <PackageReference Include="GitVersion.MsBuild" Version="5.6.10*">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="C:\Users\Marcel\.nuget\packages\naudio.vorbis\1.5.0\contentFiles\any\netstandard2.0\README.md" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Concentus" Version="1.1.7" />
+        <PackageReference Include="Concentus.OggFile" Version="1.0.4" />
+        <PackageReference Include="Discord.Net" Version="3.11.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
+        <PackageReference Include="NAudio" Version="2.1.0" />
+        <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Whisper.Runtime" Version="1.4.2001" />
+        <PackageReference Include="GitVersion.MsBuild" Version="5.6.10*">
+            <PrivateAssets>All</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
 </Project>

@@ -23,10 +23,11 @@ internal class Program
         _client.MessageReceived += MessageReceivedAsync;
 
 
-
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
+            .AddUserSecrets<Program>()
             .Build();
         _whipperSnapperConfiguration = new WhipperSnapperConfiguration();
         configuration.Bind(_whipperSnapperConfiguration);
@@ -55,57 +56,57 @@ internal class Program
 
     private async Task MessageReceivedAsync(SocketMessage arg)
     {
-        // set status to typing
-
-
         if (arg is SocketUserMessage { Flags: MessageFlags.VoiceMessage } m)
         {
+            await HandleMessage(arg, m);
+        }
+    }
 
-            var attachment = m.Attachments.FirstOrDefault();
+    private async Task HandleMessage(SocketMessage arg, SocketUserMessage m)
+    {
+        var attachment = m.Attachments.FirstOrDefault();
 
-            if (attachment != null)
-            {
-                using var typing = arg.Channel.EnterTypingState();
+        if (attachment != null)
+        {
+            using var typing = arg.Channel.EnterTypingState();
 
-                var sw = Stopwatch.StartNew();
-                var fileName = arg.Id + "-" + attachment.Filename;
-                var filePath = Path.Join(_fileDirectory, fileName);
-                var wavFilePath = Path.Join(_fileDirectory,
-                    Path.GetFileNameWithoutExtension(fileName) + ".wav");
+            var sw = Stopwatch.StartNew();
+            var fileName = arg.Id + "-" + attachment.Filename;
+            var filePath = Path.Join(_fileDirectory, fileName);
+            var wavFilePath = Path.Join(_fileDirectory,
+                Path.GetFileNameWithoutExtension(fileName) + ".wav");
 
-                await DownloadAttachment(attachment, filePath);
+            await DownloadAttachment(attachment, filePath);
 
-                await _audioConverter.ConvertToWav(filePath, wavFilePath);
+            await _audioConverter.ConvertToWav(filePath, wavFilePath);
 
-                var content = await _transcriber.Transcribe(wavFilePath);
-
-
-                var reference = new MessageReference(arg.Id);
-
-
-                sw.Stop();
-                var footer = "Transcribed by Whippersnapper in " + sw.ElapsedMilliseconds + "ms";
-
-                content = SanitizeContent(content);
+            var content = await _transcriber.Transcribe(wavFilePath);
 
 
-                var embedBuilder = new EmbedBuilder()
+            var reference = new MessageReference(arg.Id);
+
+
+            sw.Stop();
+            var footer = "Transcribed by Whippersnapper in " + sw.ElapsedMilliseconds + "ms";
+
+            content = SanitizeContent(content);
+
+
+            var embedBuilder = new EmbedBuilder()
                     .WithAuthor(arg.Author)
                     .WithDescription(content)
                     .WithColor(Color.Blue)
                     .WithFooter(footer)
-                    ;
+                ;
 
 
-                await arg.Channel.SendMessageAsync(embed: embedBuilder.Build(), allowedMentions: AllowedMentions.None,
-                    messageReference: reference);
+            await arg.Channel.SendMessageAsync(embed: embedBuilder.Build(), allowedMentions: AllowedMentions.None,
+                messageReference: reference);
 
-                if (!_whipperSnapperConfiguration.KeepAttachments)
-                {
-                    File.Delete(filePath);
-                    File.Delete(wavFilePath);
-                }
-
+            if (!_whipperSnapperConfiguration.KeepAttachments)
+            {
+                File.Delete(filePath);
+                File.Delete(wavFilePath);
             }
         }
     }
@@ -120,8 +121,6 @@ internal class Program
         }
 
         return content;
-
-
     }
 
 
@@ -161,8 +160,6 @@ internal class Program
 
             await using var s = await new HttpClient().GetStreamAsync(baseModelUrl);
             await s.CopyToAsync(fs);
-
-
 
 
             Console.WriteLine($"Downloaded base model to {baseModel}");

@@ -26,20 +26,38 @@ jobs:
     - name: Get version
       run: dotnet gitversion
     - name: Determine Version
+      id: determine-version
       uses: gittools/actions/gitversion/execute@v0
     - name: Build
       run: dotnet build --no-restore --configuration Release
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Publish
-      run: dotnet publish --no-restore --configuration Release --output ./publish ./Whippersnapper/Whippersnapper.csproj
+  
+    - name: Publish windows-x64
+      run: dotnet publish --configuration Release --output ./publish/windows-x64 --runtime win-x64 ./Whippersnapper/Whippersnapper.csproj
+
+    - name: Zip windows-x64
+      run: 7z a -tzip ./publish/windows-x64.zip ./publish/windows-x64
+
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ steps.determine-version.outputs.semver }}
+        release_name: ${{ steps.determine-version.outputs.semver }}
         draft: false
         prerelease: false
+    - name: Upload windows-x64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./publish/windows-x64.zip
+        asset_name: Whippersnapper-windows-x64.zip
+        asset_content_type: application/zip
+
+  
+      
