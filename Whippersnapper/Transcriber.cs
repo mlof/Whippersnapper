@@ -18,26 +18,22 @@ public class Transcriber
     public async Task<string> Transcribe(string filePath)
     {
         var sb = new StringBuilder();
-        await using var wavs = new WaveFileReader(filePath);
-        if (wavs.WaveFormat.SampleRate != WhisperRuntime.WHISPER_SAMPLE_RATE)
+        await using var waveFileReader = new WaveFileReader(filePath);
+        if (waveFileReader.WaveFormat.SampleRate != WhisperRuntime.WHISPER_SAMPLE_RATE)
         {
             throw new InvalidOperationException("Invalid sample rate");
         }
 
+        var buffer = new Memory<float>(new float[GetLengthInFrames(waveFileReader)]);
 
-        // var buffer = new Memory<float>(new float[ChunkSizeInFrames]);
-        var buffer = new Memory<float>(new float[GetLengthInFrames(wavs)]);
-
-        foreach (var (chunki, chunk) in ProcessFramesWithBuffer(buffer, wavs))
+        foreach (var (chunkIterator, chunk) in ProcessFramesWithBuffer(buffer, waveFileReader))
         {
-            Console.WriteLine($"Processing chunk {chunki}");
+            Console.WriteLine($"Processing chunk {chunkIterator}");
 
-            _parameters.no_context = chunki == 0;
+            _parameters.no_context = chunkIterator == 0;
 
             var test = chunk.ToArray();
 
-            // TODO: Update the wrapper to accept a span
-            // https://learn.microsoft.com/en-us/dotnet/standard/memory-and-spans/memory-t-usage-guidelines#usage-guidelines
             var ret = WhisperRuntime.whisper_full(_context, _parameters, test, test.Length);
             if (ret != 0)
             {

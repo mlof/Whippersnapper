@@ -5,9 +5,8 @@ using Microsoft.Extensions.Configuration;
 
 namespace Whippersnapper;
 
-internal class Program
+internal sealed class Program : IDisposable
 {
-    private readonly AudioConverter _audioConverter;
     private readonly DiscordSocketClient _client;
     private readonly string _fileDirectory;
     private readonly HttpClient _httpClient = new HttpClient();
@@ -20,7 +19,8 @@ internal class Program
         var socketConfig = new DiscordSocketConfig
         {
             MessageCacheSize = 100,
-            GatewayIntents = GatewayIntents.GuildMessages | GatewayIntents.GuildMessageTyping | GatewayIntents.MessageContent | GatewayIntents.Guilds
+            GatewayIntents = GatewayIntents.GuildMessages | GatewayIntents.GuildMessageTyping |
+                             GatewayIntents.MessageContent | GatewayIntents.Guilds
         };
         _client = new DiscordSocketClient(socketConfig);
         _client.Log += LogAsync;
@@ -35,8 +35,6 @@ internal class Program
             .Build();
         _whipperSnapperConfiguration = new WhipperSnapperConfiguration();
         configuration.Bind(_whipperSnapperConfiguration);
-
-        _audioConverter = new AudioConverter();
 
 
         ArgumentNullException.ThrowIfNull(_whipperSnapperConfiguration.BotToken);
@@ -56,6 +54,12 @@ internal class Program
 
 
         _client.SetActivityAsync(new Game(_whipperSnapperConfiguration.StatusMessage));
+    }
+
+    public void Dispose()
+    {
+        _client.Dispose();
+        _httpClient.Dispose();
     }
 
     private async Task MessageReceivedAsync(SocketMessage arg)
@@ -82,7 +86,7 @@ internal class Program
 
             await DownloadAttachment(attachment, filePath);
 
-            await _audioConverter.ConvertToWav(filePath, wavFilePath);
+            await AudioConverter.ConvertToWav(filePath, wavFilePath);
 
             var content = await _transcriber.Transcribe(wavFilePath);
 
@@ -131,7 +135,8 @@ internal class Program
     private async Task DownloadAttachment(IAttachment attachment, string filePath)
     {
         Console.WriteLine($"Downloading {attachment.Url} to {filePath}");
-        await using var s = await _httpClient.GetStreamAsync(attachment.Url);
+        var uri = new Uri(attachment.Url);
+        await using var s = await _httpClient.GetStreamAsync(uri);
 
 
         await using var fs = File.Create(filePath);
@@ -152,7 +157,7 @@ internal class Program
 
         var baseModel = Path.Join(modelDirectory, "ggml-base.bin");
 
-        var baseModelUrl = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin";
+        var baseModelUrl = new Uri("https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin");
         Directory.CreateDirectory(modelDirectory);
 
 
@@ -161,15 +166,15 @@ internal class Program
         {
             Console.WriteLine($"Downloading base model from {baseModelUrl}");
             await using var fs = File.Create(baseModel);
-
-            await using var s = await new HttpClient().GetStreamAsync(baseModelUrl);
+            using var client = new HttpClient();
+            await using var s = await client.GetStreamAsync(baseModelUrl);
             await s.CopyToAsync(fs);
 
 
             Console.WriteLine($"Downloaded base model to {baseModel}");
         }
 
-        var program = new Program();
+        using var program = new Program();
 
         await program.RunAsync();
     }

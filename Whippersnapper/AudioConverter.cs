@@ -5,9 +5,9 @@ using Whisper.Runtime;
 
 namespace Whippersnapper;
 
-internal class AudioConverter
+internal static class AudioConverter
 {
-    public async Task ConvertToWav(string filePath, string wavFilePath)
+    public static async Task ConvertToWav(string filePath, string wavFilePath)
     {
         Console.WriteLine("Converting Ogg to WAV");
         await using var fileIn = new FileStream(filePath, FileMode.Open);
@@ -26,7 +26,7 @@ internal class AudioConverter
             foreach (var t in packet)
             {
                 var bytes = BitConverter.GetBytes(t);
-                pcmStream.Write(bytes, 0, bytes.Length);
+                await pcmStream.WriteAsync(bytes, 0, bytes.Length);
             }
         }
 
@@ -48,7 +48,7 @@ internal class AudioConverter
         await using var wavFileReader = new WaveFileReader(tempFileName);
         var targetSampleRate = WhisperRuntime.WHISPER_SAMPLE_RATE;
 
-        var resampler = new MediaFoundationResampler(wavFileReader, new WaveFormat(targetSampleRate, 1));
+        using var resampler = new MediaFoundationResampler(wavFileReader, new WaveFormat(targetSampleRate, 1));
 
         WaveFileWriter.CreateWaveFile16(wavFilePath, resampler.ToSampleProvider());
     }

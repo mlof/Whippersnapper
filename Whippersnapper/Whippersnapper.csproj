@@ -11,6 +11,9 @@
         <PublishSingleFile>true</PublishSingleFile>
         <SelfContained>true</SelfContained>
         <UserSecretsId>652c9c20-9f1f-470c-80dd-d67aba3a69af</UserSecretsId>
+        <AnalysisLevel>latest-all</AnalysisLevel>
+        <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+        <AnalysisLevel>latest-recommended</AnalysisLevel>
 
     </PropertyGroup>
 
