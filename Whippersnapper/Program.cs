@@ -17,7 +17,11 @@ internal class Program
 
     private Program()
     {
-        var socketConfig = new DiscordSocketConfig { MessageCacheSize = 100, GatewayIntents = GatewayIntents.All };
+        var socketConfig = new DiscordSocketConfig
+        {
+            MessageCacheSize = 100,
+            GatewayIntents = GatewayIntents.GuildMessages | GatewayIntents.GuildMessageTyping | GatewayIntents.MessageContent | GatewayIntents.Guilds
+        };
         _client = new DiscordSocketClient(socketConfig);
         _client.Log += LogAsync;
         _client.MessageReceived += MessageReceivedAsync;
