@@ -4,7 +4,7 @@ A small transcription bot for Discord.
 
 ## Usage
 
-1. Create a Discord bot and invite it to your server.
+1. Create a Discord bot in the developer portal.
 2. Add the bot's token to `appsettings.json`.
 3. Go to the OAuth2 -> Url Generator tab in the Discord Developer Portal, select the bot scope, ensure the "Send Messages" and "Embed Links" permissions are selected and copy the generated URL.
 4. Paste the URL into your browser and select the server you want to add the bot to.
