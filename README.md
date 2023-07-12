@@ -23,6 +23,19 @@ The following configuration options are available:
 | `KeepAttachments` | Whether to keep the audio files after transcription. | `false` |
 | `StatusMessage` | The message to display as the bot's status. | `"Always listening, never sleeping."` |
 | `BadWords` | A list of words to censor. | `["PHP"]` |
+| `Translate` | Whether to translate the transcription to English. | `false` |
+| `Strategy` | The strategy to use for translation. | `"WHISPER_SAMPLING_BEAM_SEARCH"` |
+| `Threads` | The number of threads to use for transcription. | `4` |
+
+### Strategy
+
+The strategy option determines how the translation is performed. The following strategies are available:
+
+| Strategy | Description |
+| -------- | ----------- |
+| `WHISPER_SAMPLING_GREEDY` | Greedy sampling. |
+| `WHISPER_SAMPLING_BEAM_SEARCH` | Beam search sampling. |
+
 
 This can be configured in `appsettings.json`. 
 If you want to use a different model, you can download one from [here](https://huggingface.co/ggerganov/whisper.cpp) but i've found that the default one works well enough.

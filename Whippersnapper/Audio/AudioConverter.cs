@@ -3,11 +3,11 @@ using Concentus.Structs;
 using NAudio.Wave;
 using Whisper.Runtime;
 
-namespace Whippersnapper;
+namespace Whippersnapper.Audio;
 
-internal static class AudioConverter
+public static class AudioConverter
 {
-    public static async Task ConvertToWav(string filePath, string wavFilePath)
+    public static async Task ConvertToWav(string filePath, string wavFilePath, CancellationToken cancellationToken)
     {
         Console.WriteLine("Converting Ogg to WAV");
         await using var fileIn = new FileStream(filePath, FileMode.Open);
@@ -26,7 +26,7 @@ internal static class AudioConverter
             foreach (var t in packet)
             {
                 var bytes = BitConverter.GetBytes(t);
-                await pcmStream.WriteAsync(bytes, 0, bytes.Length);
+                await pcmStream.WriteAsync(bytes, 0, bytes.Length, cancellationToken);
             }
         }
 

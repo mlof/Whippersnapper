@@ -41,7 +41,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.determine-version.outputs.semver }}
-        release_name: ${{ steps.determine-version.outputs.semver }}
+        release_name: v${{ steps.determine-version.outputs.semver }}
         draft: false
         prerelease: false
     - name: Upload windows-x64
