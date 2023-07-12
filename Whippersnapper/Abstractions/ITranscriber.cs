@@ -4,5 +4,5 @@ namespace Whippersnapper.Abstractions;
 
 public interface ITranscriber
 {
-    Task<Transcriber.TranscriptionResult> Transcribe(string filePath);
+    Task<TranscriptionResult> Transcribe(string filePath);
 }
