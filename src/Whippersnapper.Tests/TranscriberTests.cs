@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
 using Microsoft.Extensions.Options;
+using System.Runtime.InteropServices;
 using Whippersnapper.Configuration;
 using Whippersnapper.Whisper;
 
@@ -29,6 +30,15 @@ public class TranscriberTests
     [Test]
     public async Task CanTranscribe()
     {
+        // check if running on linux
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            // skip test if running on linux
+
+            Assert.Ignore("Skipping test on linux");
+        }
+
         var transcriber = new Transcriber(modelManager, transcriberLogger, options);
 
         var filePath = Path.Combine("files", "default.wav");
