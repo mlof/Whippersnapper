@@ -19,7 +19,7 @@ public class BuildContext : FrostingContext
         this.ProjectPath = this.RepositoryRoot.Combine("src").Combine("Whippersnapper");
         this.TestPath = this.RepositoryRoot.Combine("src").Combine("Whippersnapper.Tests");
         this.InstallerPath = this.RepositoryRoot.Combine("src").Combine("Whippersnapper.Installer");
-
+        this.RuntimeIdentifier = context.Argument("runtime", "win-x64");
         this.ArtifactPath = this.RepositoryRoot.Combine("artifacts");
         var version = context.GitVersion();
 
@@ -40,6 +40,7 @@ public class BuildContext : FrostingContext
     public string MsBuildConfiguration { get; set; }
 
     public DirectoryPath RepositoryRoot { get; set; }
+    public string RuntimeIdentifier { get; set; }
 
 
     private static DirectoryPath GetRepositoryRoot(ICakeContext context)

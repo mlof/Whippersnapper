@@ -15,6 +15,7 @@ public class BuildTask : FrostingTask<BuildContext>
         var buildSettings = new DotNetBuildSettings()
         {
             Configuration = context.MsBuildConfiguration,
+            Runtime = context.RuntimeIdentifier,
         };
         context.DotNetBuild(context.ProjectPath.ToString(), buildSettings);
         context.DotNetBuild(context.TestPath.ToString(), buildSettings);
