@@ -23,16 +23,6 @@ jobs:
     - name: Determine Version
       id: determine-version
       uses: gittools/actions/gitversion/execute@v0
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-  
-    - name: Publish windows-x64
-      run: dotnet publish --configuration Release --output ./publish/windows-x64 --runtime win-x64 ./Whippersnapper/Whippersnapper.csproj
-
-    - name: Zip windows-x64
-      run: 7z a -tzip ./publish/windows-x64.zip ./publish/windows-x64
 
     - name: Create release
       id: create_release
@@ -44,15 +34,8 @@ jobs:
         release_name: v${{ steps.determine-version.outputs.semver }}
         draft: false
         prerelease: false
-    - name: Upload windows-x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./publish/windows-x64.zip
-        asset_name: Whippersnapper-windows-x64.zip
-        asset_content_type: application/zip
-
+    - name: Build
+      run: dotnet run --project ./src/Whippersnapper.Build -t PublishArtifacts
+  
   
       
