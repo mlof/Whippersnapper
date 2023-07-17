@@ -16,7 +16,7 @@ public class PublishInstallerTask : FrostingTask<BuildContext>
         context.DotNetPublish(context.InstallerPath.ToString(), new DotNetPublishSettings()
         {
             Configuration = context.MsBuildConfiguration,
-
+            Runtime = context.RuntimeIdentifier,
 
             NoLogo = true,
             Verbosity = DotNetVerbosity.Detailed,

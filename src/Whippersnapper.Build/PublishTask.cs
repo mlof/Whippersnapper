@@ -16,6 +16,7 @@ public class PublishTask : FrostingTask<BuildContext>
         context.DotNetPublish(context.ProjectPath.ToString(), new DotNetPublishSettings()
         {
             Configuration = context.MsBuildConfiguration,
+            Runtime = context.RuntimeIdentifier,
 
         });
         var artifactDirectory = context.ArtifactPath.Combine(context.Version);
