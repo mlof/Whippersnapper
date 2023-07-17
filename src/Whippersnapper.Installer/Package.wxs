@@ -1,0 +1,98 @@
+﻿<?define Name = "Whippersnapper" ?>
+<?define Manufacturer = "mlof" ?>
+<?define Version = "1.0.0.0" ?>
+<?define UpgradeCode = "D7EB8703-1E7F-41AD-9020-10F771AAED20" ?>
+
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+             xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
+             xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx"
+
+>
+    <Package Name="$(Name)"
+             Manufacturer="$(Manufacturer)"
+             Version="$(Version)"
+             UpgradeCode="$(var.UpgradeCode)"
+             Compressed="true"
+             >
+
+
+        <MediaTemplate EmbedCab="yes" />
+
+        <ui:WixUI
+            Id="WixUI_InstallDir"
+            InstallDirectory="INSTALLFOLDER"
+
+        />
+
+
+        <!-- Allow upgrades and prevent downgrades -->
+        <MajorUpgrade
+            DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
+
+        <!-- Define the directory structure -->
+
+        <StandardDirectory Id="ProgramFiles6432Folder">
+
+            <!-- Create a directory under Program Files\Whippersnapper -->
+            <Directory Id="INSTALLFOLDER" Name="$(var.Name)">
+
+                <Directory Name="files" />
+                <Directory Name="models" />
+
+
+            </Directory>
+
+        </StandardDirectory>
+
+
+        <DirectoryRef Id="INSTALLFOLDER">
+
+            <!-- Create a single component which is the Whippersnapper.exe file -->
+            <Component Id="ServiceExecutable" Bitness="always64" >
+
+                <!-- Copies the Whippersnapper.exe file using the
+                     project reference preprocessor variables -->
+                <File Id="Whippersnapper.exe"
+                      Source="$(var.Whippersnapper.TargetDir)publish\Whippersnapper.exe"
+                      KeyPath="true" />
+
+                <File Id="whisper.dll"
+                      Source="$(var.Whippersnapper.TargetDir)publish\whisper.dll"
+                      KeyPath="false" />
+                <File Id="Whippersnapper.pdb"
+                      Source="$(var.Whippersnapper.TargetDir)publish\Whippersnapper.pdb"
+                      KeyPath="false" />
+
+                <File Id="appsettings.json" Source="$(var.Whippersnapper.TargetDir)publish\appsettings.json" KeyPath="false" />
+                <File Id="README.md" Source="$(var.Whippersnapper.TargetDir)publish\README.md" KeyPath="false" />
+
+
+
+                <!-- Remove all files from the INSTALLFOLDER on uninstall -->
+                <RemoveFile Id="ALLFILES" Name="*.*" On="both" />
+
+                <!-- Tell WiX to install the Service -->
+                <ServiceInstall Id="ServiceInstaller"
+                                Type="ownProcess"
+                                Name="Whippersnapper"
+                                DisplayName="$(Name)"
+                                Start="auto"
+                                ErrorControl="normal" />
+
+                <!-- Tell WiX to start the Service -->
+                <ServiceControl Id="StartService"
+                                Start="install"
+                                Stop="both"
+                                Remove="uninstall"
+                                Name="Whippersnapper"
+                                Wait="true" />
+            </Component>
+        </DirectoryRef>
+
+        <!-- Tell WiX to install the files -->
+        <Feature Id="Service" Title="Whippersnapper Setup" Level="1">
+            <ComponentRef Id="ServiceExecutable" />
+        </Feature>
+
+    </Package>
+</Wix>
