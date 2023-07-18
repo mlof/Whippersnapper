@@ -20,7 +20,7 @@ public class ModelManager : IModelManager
         }
     }
 
-    public async Task EnsureModelExists(string modelName = Constants.BaseModel)
+    public async Task EnsureModelExists(string modelName)
     {
         var filePath = Path.Join(_modelDirectory, modelName);
 

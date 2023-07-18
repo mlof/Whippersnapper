@@ -8,7 +8,7 @@ public class WhipperSnapperConfiguration
 {
     public string? BotToken { get; init; }
     public bool KeepAttachments { get; init; }
-    public string ModelFile { get; init; } = Constants.BaseModel;
+    public string ModelFile { get; init; } = "ggml-base.bin";
     public string? StatusMessage { get; init; }
 
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global

@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Options;
+using Serilog;
 using Whippersnapper.Abstractions;
 using Whippersnapper.Configuration;
 using Whippersnapper.Whisper;
@@ -11,13 +12,60 @@ internal sealed class Program
 {
     public static async Task Main(string[] args)
     {
+        var logPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "logs", "log_.txt");
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.File(logPath, rollingInterval: RollingInterval.Day,
+                retainedFileTimeLimit: TimeSpan.FromDays(7))
+            .WriteTo.Console()
+            .CreateLogger();
+
+        var host = BuildHost(args);
+        // ensure directories exist 
+
+        Log.Information("Ensuring directories exist");
+
+        var options = host.Services.GetRequiredService<IOptions<WhipperSnapperConfiguration>>();
+
+        var modelDirectory = options.Value.ModelDirectory;
+        if (!Directory.Exists(modelDirectory))
+        {
+            Directory.CreateDirectory(modelDirectory);
+        }
+
+        var filesDirectory = options.Value.FileDirectory;
+
+        if (!Directory.Exists(filesDirectory))
+        {
+            Directory.CreateDirectory(filesDirectory);
+        }
+
+        // ensure selected model exists 
+
+        Log.Information("Ensuring model exists");
+
+        var modelManager = host.Services.GetRequiredService<IModelManager>();
+
+        await modelManager.EnsureModelExists(options.Value.ModelFile);
+
+        Log.Information("Starting host");
+
+        await host.RunAsync();
+    }
+
+    private static IHost BuildHost(string[] args)
+    {
         var builder = Host.CreateApplicationBuilder(args);
         builder.Configuration.SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json")
             .AddEnvironmentVariables()
+            .AddCommandLine(args)
             .AddUserSecrets<Program>();
+        builder.Services.AddWindowsService(options =>
+        {
+            options.ServiceName = "Whippersnapper";
+        });
 
-
+        builder.Services.AddSerilog();
         var socketConfig = new DiscordSocketConfig
         {
             MessageCacheSize = 100,
@@ -40,24 +88,6 @@ internal sealed class Program
         builder.Services.AddHostedService<Worker>();
 
         var host = builder.Build();
-        // ensure directories exist 
-
-        var modelManager = host.Services.GetRequiredService<IOptions<WhipperSnapperConfiguration>>();
-
-        var modelDirectory = modelManager.Value.ModelDirectory;
-        if (!Directory.Exists(modelDirectory))
-        {
-            Directory.CreateDirectory(modelDirectory);
-        }
-
-        var filesDirectory = modelManager.Value.FileDirectory;
-
-        if (!Directory.Exists(filesDirectory))
-        {
-            Directory.CreateDirectory(filesDirectory);
-        }
-
-
-        await host.RunAsync();
+        return host;
     }
 }
