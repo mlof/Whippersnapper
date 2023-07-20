@@ -12,9 +12,9 @@ public class TestTask : FrostingTask<BuildContext>
     public override void Run(BuildContext context)
     {
         context.Information("Testing...");
-        context.DotNetTest(context.RepositoryRoot.ToString(), new DotNetTestSettings()
+        context.DotNetTest(context.RepositoryRoot.ToString(), new DotNetTestSettings
         {
-            Configuration = context.MsBuildConfiguration,
+            Configuration = context.MsBuildConfiguration
         });
     }
 }

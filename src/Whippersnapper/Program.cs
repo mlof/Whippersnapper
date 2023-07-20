@@ -1,9 +1,11 @@
 ﻿using Discord;
+using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Whippersnapper.Abstractions;
 using Whippersnapper.Configuration;
+using Whippersnapper.Modules;
 using Whippersnapper.Whisper;
 
 namespace Whippersnapper;
@@ -60,10 +62,7 @@ internal sealed class Program
             .AddEnvironmentVariables()
             .AddCommandLine(args)
             .AddUserSecrets<Program>();
-        builder.Services.AddWindowsService(options =>
-        {
-            options.ServiceName = "Whippersnapper";
-        });
+        builder.Services.AddWindowsService(options => { options.ServiceName = "Whippersnapper"; });
 
         builder.Services.AddSerilog();
         var socketConfig = new DiscordSocketConfig
@@ -73,13 +72,22 @@ internal sealed class Program
                              GatewayIntents.MessageContent | GatewayIntents.Guilds
         };
 
-        builder.Services.AddSingleton(new DiscordSocketClient(socketConfig));
+        builder.Services.AddSingleton(socketConfig);
+
+        builder.Services.AddSingleton<DiscordSocketClient>();
+
+        var interactionConfig = new InteractionServiceConfig();
+
+
+        builder.Services.AddSingleton(interactionConfig);
+        builder.Services.AddSingleton<InteractionService>();
+        builder.Services.AddSingleton<InteractionHandler>();
 
         // add options 
 
         builder.Services.Configure<WhipperSnapperConfiguration>(builder.Configuration);
         builder.Services.AddSingleton<ITranscriber, Transcriber>();
-
+        builder.Services.AddSingleton<HealthModule>();
         builder.Services.AddHttpClient();
 
         builder.Services.AddSingleton<IModelManager, ModelManager>();
@@ -88,6 +96,8 @@ internal sealed class Program
         builder.Services.AddHostedService<Worker>();
 
         var host = builder.Build();
+
+
         return host;
     }
 }

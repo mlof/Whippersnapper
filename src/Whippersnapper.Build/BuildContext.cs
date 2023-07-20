@@ -9,22 +9,21 @@ namespace Whippersnapper.Build;
 
 public class BuildContext : FrostingContext
 {
-
     public BuildContext(ICakeContext context)
         : base(context)
     {
-        this.RepositoryRoot = GetRepositoryRoot(context);
+        RepositoryRoot = GetRepositoryRoot(context);
 
-        this.MsBuildConfiguration = context.Argument("configuration", "Release");
-        this.ProjectPath = this.RepositoryRoot.Combine("src").Combine("Whippersnapper");
-        this.TestPath = this.RepositoryRoot.Combine("src").Combine("Whippersnapper.Tests");
-        this.InstallerPath = this.RepositoryRoot.Combine("src").Combine("Whippersnapper.Installer");
-        this.RuntimeIdentifier = context.Argument("runtime", "win-x64");
-        this.ArtifactPath = this.RepositoryRoot.Combine("artifacts");
+        MsBuildConfiguration = context.Argument("configuration", "Release");
+        ProjectPath = RepositoryRoot.Combine("src").Combine("Whippersnapper");
+        TestPath = RepositoryRoot.Combine("src").Combine("Whippersnapper.Tests");
+        InstallerPath = RepositoryRoot.Combine("src").Combine("Whippersnapper.Installer");
+        RuntimeIdentifier = context.Argument("runtime", "win-x64");
+        ArtifactPath = RepositoryRoot.Combine("artifacts");
         var version = context.GitVersion();
 
 
-        this.Version = version.SemVer;
+        Version = version.SemVer;
     }
 
     public string Version { get; set; }
@@ -54,5 +53,4 @@ public class BuildContext : FrostingContext
 
         return directoryPath;
     }
-
 }
