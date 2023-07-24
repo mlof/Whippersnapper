@@ -1,8 +1,11 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using MediatR;
 using Microsoft.Extensions.Options;
 using Whippersnapper.Abstractions;
 using Whippersnapper.Configuration;
+using Whippersnapper.Interactions;
+using Whippersnapper.Messaging.Notifications;
 
 namespace Whippersnapper;
 
@@ -10,18 +13,17 @@ internal class Worker : BackgroundService
 {
     private readonly DiscordSocketClient _client;
     private readonly ILogger<Worker> _logger;
-    private readonly IMessageHandler _messageHandler;
     private readonly InteractionHandler _interactionHandler;
     private readonly string _modelFile;
     private readonly IModelManager _modelManager;
     private readonly string? _token;
+    private readonly IServiceScopeFactory _serviceScope;
 
     public Worker(ILogger<Worker> logger,
         IModelManager modelManager,
         DiscordSocketClient client,
-        IMessageHandler messageHandler,
         InteractionHandler interactionHandler,
-        IOptions<WhipperSnapperConfiguration> options)
+        IOptions<WhipperSnapperConfiguration> options, IServiceScopeFactory serviceScope)
     {
         _logger = logger;
 
@@ -29,8 +31,8 @@ internal class Worker : BackgroundService
         _modelManager = modelManager;
         _client = client;
 
-        _messageHandler = messageHandler;
         _interactionHandler = interactionHandler;
+        _serviceScope = serviceScope;
         _client.Log += LogAsync;
         _client.MessageReceived += MessageReceivedAsync;
         _client.Ready += ClientReady;
@@ -54,9 +56,26 @@ internal class Worker : BackgroundService
 
     private async Task MessageReceivedAsync(SocketMessage arg)
     {
-        if (arg is SocketUserMessage { Flags: MessageFlags.VoiceMessage } m)
+        if (arg is SocketUserMessage { Flags: MessageFlags.VoiceMessage } socketUserMessage)
         {
-            await _messageHandler.HandleMessage(m, default);
+            if (arg.Attachments.Count == 0)
+            {
+                _logger.LogError("Received voice message with no attachment. Are your permissions correct?");
+
+                return;
+            }
+            else if (arg.Attachments.Count > 1)
+            {
+                _logger.LogError("Received voice message with more than one attachment. What's going on?");
+
+                return;
+            }
+
+            await Mediator.Publish(new VoiceMessageReceivedNotification(socketUserMessage));
+        }
+        else
+        {
+            await Mediator.Publish(new MessageReceivedNotification(arg));
         }
     }
 
@@ -67,6 +86,15 @@ internal class Worker : BackgroundService
         return Task.CompletedTask;
     }
 
+    private IMediator Mediator
+    {
+        get
+        {
+            var scope = _serviceScope.CreateScope();
+            return scope.ServiceProvider.GetRequiredService<IMediator>();
+        }
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         await _modelManager.EnsureModelExists(_modelFile);
@@ -75,12 +103,12 @@ internal class Worker : BackgroundService
         await _client.StartAsync();
 
 
-
         while (_client.ConnectionState != ConnectionState.Connected)
         {
             _logger.LogInformation("Waiting for connection...");
             await Task.Delay(1000, stoppingToken);
         }
+
         _logger.LogInformation("Connected");
 
 

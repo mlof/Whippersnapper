@@ -3,7 +3,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Whippersnapper.Modules;
 
-namespace Whippersnapper;
+namespace Whippersnapper.Interactions;
 
 public class InteractionHandler
 {
@@ -28,7 +28,7 @@ public class InteractionHandler
 
 
 
-        await _handler.AddModuleAsync<HealthModule>(_services);
+        await _handler.AddModuleAsync<AdministrationModule>(_services);
 
         _client.InteractionCreated += HandleInteraction;
     }

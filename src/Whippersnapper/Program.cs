@@ -1,12 +1,15 @@
 ﻿using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Whippersnapper.Abstractions;
 using Whippersnapper.Configuration;
+using Whippersnapper.Data;
+using Whippersnapper.Interactions;
 using Whippersnapper.Modules;
-using Whippersnapper.Whisper;
+using Whisper.net;
 
 namespace Whippersnapper;
 
@@ -24,34 +27,21 @@ internal sealed class Program
         var host = BuildHost(args);
         // ensure directories exist 
 
-        Log.Information("Ensuring directories exist");
 
-        var options = host.Services.GetRequiredService<IOptions<WhipperSnapperConfiguration>>();
+        await Initialize(host);
 
-        var modelDirectory = options.Value.ModelDirectory;
-        if (!Directory.Exists(modelDirectory))
-        {
-            Directory.CreateDirectory(modelDirectory);
-        }
-
-        var filesDirectory = options.Value.FileDirectory;
-
-        if (!Directory.Exists(filesDirectory))
-        {
-            Directory.CreateDirectory(filesDirectory);
-        }
-
-        // ensure selected model exists 
-
-        Log.Information("Ensuring model exists");
-
-        var modelManager = host.Services.GetRequiredService<IModelManager>();
-
-        await modelManager.EnsureModelExists(options.Value.ModelFile);
 
         Log.Information("Starting host");
 
+
         await host.RunAsync();
+    }
+
+    private static async Task Initialize(IHost host)
+    {
+        using var initializer = new Initializer(host.Services);
+
+        await initializer.Initialize();
     }
 
     private static IHost BuildHost(string[] args)
@@ -81,17 +71,34 @@ internal sealed class Program
         builder.Services.AddSingleton(interactionConfig);
         builder.Services.AddSingleton<InteractionService>();
         builder.Services.AddSingleton<InteractionHandler>();
+        builder.Services.AddDbContext<WhippersnapperContext>(optionsBuilder =>
+        {
+            optionsBuilder
+                .UseSqlite("Data Source=" + WhippersnapperContext.FilePath)
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors();
+        });
 
+        builder.Services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblyContaining<Program>());
         // add options 
 
         builder.Services.Configure<WhipperSnapperConfiguration>(builder.Configuration);
-        builder.Services.AddSingleton<ITranscriber, Transcriber>();
-        builder.Services.AddSingleton<HealthModule>();
+        builder.Services.AddSingleton<AdministrationModule>();
         builder.Services.AddHttpClient();
+
+        builder.Services.AddSingleton(provider =>
+        {
+            var modelManager = provider.GetRequiredService<IModelManager>();
+            var options = provider.GetRequiredService<IOptions<WhipperSnapperConfiguration>>();
+            var modelFile = modelManager.GetModelPath(options.Value.ModelFile);
+
+            var factory = WhisperFactory.FromPath(modelFile);
+
+            return factory;
+        });
 
         builder.Services.AddSingleton<IModelManager, ModelManager>();
 
-        builder.Services.AddSingleton<IMessageHandler, MessageHandler>();
         builder.Services.AddHostedService<Worker>();
 
         var host = builder.Build();

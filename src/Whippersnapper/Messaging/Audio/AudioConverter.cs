@@ -2,7 +2,7 @@
 using Concentus.Structs;
 using NAudio.Wave;
 
-namespace Whippersnapper.Audio;
+namespace Whippersnapper.Messaging.Audio;
 
 public static class AudioConverter
 {

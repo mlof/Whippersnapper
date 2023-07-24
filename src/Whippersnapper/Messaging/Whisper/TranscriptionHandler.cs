@@ -1,71 +1,60 @@
-﻿using Microsoft.Extensions.Options;
+﻿using MediatR;
+using Microsoft.Extensions.Options;
 using NAudio.Wave;
 using System.Diagnostics;
 using System.Text;
-using Whippersnapper.Abstractions;
 using Whippersnapper.Configuration;
 using Whisper.net;
 
-namespace Whippersnapper.Whisper;
+namespace Whippersnapper.Messaging.Whisper;
 
-public class Transcriber : ITranscriber
+public class TranscriptionHandler : IRequestHandler<TranscriptionRequest, TranscriptionResult>
 {
-    private readonly ILogger<Transcriber> _logger;
-    private readonly bool _translate;
-    private int _threads;
-    private readonly WhisperFactory factory;
+    private readonly ILogger<TranscriptionHandler> _logger;
+    private readonly WhisperFactory _factory;
+    private readonly int _threads;
 
-    public Transcriber(IModelManager modelManager,
-        ILogger<Transcriber> logger,
-        IOptions<WhipperSnapperConfiguration> options)
+    public TranscriptionHandler(
+        ILogger<TranscriptionHandler> logger,
+        IOptions<WhipperSnapperConfiguration> options,
+        WhisperFactory factory)
     {
         _logger = logger;
-        var modelFile = modelManager.GetModelPath(options.Value.ModelFile);
-
-        _translate = options.Value.Translate;
+        this._factory = factory;
 
 
         _threads = options.Value.Threads;
-
-        Languages = new Dictionary<int, string>();
-
-
-        this.factory = WhisperFactory.FromPath(modelFile);
-
     }
 
-    private Dictionary<int, string> Languages { get; }
 
-
-    public async Task<TranscriptionResult> Transcribe(string filePath)
+    public async Task<TranscriptionResult> Handle(TranscriptionRequest request, CancellationToken cancellationToken)
     {
+        var filePath = request.Filepath;
+
         var sw = Stopwatch.StartNew();
         var sb = new StringBuilder();
-        var processorBuilder = factory.CreateBuilder();
-        processorBuilder.WithThreads(_threads);
-        if (_translate)
-        {
-            processorBuilder.WithTranslate();
-        }
+        await using var processor = GetProcessor(request);
 
         await using var waveFileReader = new WaveFileReader(filePath);
 
 
         var buffer = new Memory<float>(new float[GetLengthInFrames(waveFileReader)]);
 
-        await using var processor = processorBuilder.Build();
 
+        var segments = new List<SegmentData>();
 
         foreach (var (chunkIterator, chunk) in ProcessFramesWithBuffer(buffer, waveFileReader))
         {
-            _logger.LogInformation($"Processing chunk {chunkIterator}");
+            _logger.LogInformation("Processing chunk {ChunkIterator}", chunkIterator);
 
             var test = chunk.ToArray();
 
 
-            await foreach (var segmentData in processor.ProcessAsync(test))
+            await foreach (var segmentData in processor.ProcessAsync(test, cancellationToken))
             {
+
                 sb.Append(segmentData.Text);
+                segments.Add(segmentData);
             }
         }
 
@@ -74,8 +63,27 @@ public class Transcriber : ITranscriber
 
 
         var transcription = sb.ToString();
-        return new TranscriptionResult { Text = transcription, Elapsed = sw.Elapsed };
+        return new TranscriptionResult { Text = transcription, Elapsed = sw.Elapsed, Segments = segments };
     }
+
+    private WhisperProcessor GetProcessor(TranscriptionRequest request)
+    {
+        var processorBuilder = _factory.CreateBuilder();
+        processorBuilder.WithThreads(_threads);
+        if (request.ShouldTranslate)
+        {
+            processorBuilder.WithTranslate();
+        }
+
+        processorBuilder.WithBeamSearchSamplingStrategy();
+
+        processorBuilder.WithLanguageDetection();
+        processorBuilder.WithProbabilities();
+
+        return processorBuilder.Build();
+    }
+
+
 
     private static float? GetNextFrame(WaveStream stream)
     {
@@ -127,6 +135,6 @@ public class Transcriber : ITranscriber
 
     public void Dispose()
     {
-        factory.Dispose();
+        _factory.Dispose();
     }
 }
