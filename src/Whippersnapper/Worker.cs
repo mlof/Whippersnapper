@@ -24,6 +24,8 @@ internal class Worker : BackgroundService
         IOptions<WhipperSnapperConfiguration> options)
     {
         _logger = logger;
+
+        _logger.LogInformation("Starting worker");
         _modelManager = modelManager;
         _client = client;
 
@@ -71,6 +73,7 @@ internal class Worker : BackgroundService
         await _interactionHandler.InitializeAsync();
         await _client.LoginAsync(TokenType.Bot, _token);
         await _client.StartAsync();
+
 
 
         while (_client.ConnectionState != ConnectionState.Connected)

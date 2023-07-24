@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Options;
+using System.Diagnostics;
 using Whippersnapper.Abstractions;
 using Whippersnapper.Audio;
 using Whippersnapper.Configuration;
-using Whisper.Runtime;
 
 namespace Whippersnapper;
 
@@ -17,7 +16,6 @@ public class MessageHandler : IMessageHandler
     private readonly bool _keepAttachments;
     private readonly ITranscriber _transcriber;
     private readonly bool _debug;
-    private readonly whisper_sampling_strategy _strategy;
 
     public MessageHandler(
         ITranscriber transcriber,
@@ -33,7 +31,6 @@ public class MessageHandler : IMessageHandler
         _badWords = whipperSnapperConfiguration.Value.BadWords;
         _keepAttachments = whipperSnapperConfiguration.Value.KeepAttachments;
         _debug = whipperSnapperConfiguration.Value.Debug;
-        _strategy = whipperSnapperConfiguration.Value.Strategy;
     }
 
     public async Task HandleMessage(SocketUserMessage socketMessage, CancellationToken cancellationToken)

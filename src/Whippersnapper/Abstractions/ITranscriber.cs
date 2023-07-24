@@ -2,7 +2,7 @@
 
 namespace Whippersnapper.Abstractions;
 
-public interface ITranscriber
+public interface ITranscriber : IDisposable
 {
     Task<TranscriptionResult> Transcribe(string filePath);
 }

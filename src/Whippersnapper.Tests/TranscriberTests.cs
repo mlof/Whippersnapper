@@ -1,6 +1,8 @@
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
 using Microsoft.Extensions.Options;
+using System.Runtime.InteropServices;
 using Whippersnapper.Configuration;
 using Whippersnapper.Whisper;
 
@@ -25,7 +27,7 @@ public class TranscriberTests
         await this.modelManager.EnsureModelExists("ggml-base.bin");
     }
 
-    /*[Test]
+    [Test]
     public async Task CanTranscribe()
     {
         // check if running on linux
@@ -56,5 +58,5 @@ public class TranscriberTests
 
         actual.Should().StartWithEquivalentOf(start);
         actual.Should().ContainEquivalentOf(middle);
-    }*/
+    }
 }

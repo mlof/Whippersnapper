@@ -60,8 +60,7 @@ internal sealed class Program
         builder.Configuration.SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json")
             .AddEnvironmentVariables()
-            .AddCommandLine(args)
-            .AddUserSecrets<Program>();
+            .AddCommandLine(args);
         builder.Services.AddWindowsService(options => { options.ServiceName = "Whippersnapper"; });
 
         builder.Services.AddSerilog();

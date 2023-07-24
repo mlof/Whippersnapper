@@ -1,6 +1,4 @@
-﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
-
-using Whisper.Runtime;
+﻿
 
 namespace Whippersnapper.Configuration;
 
@@ -17,6 +15,5 @@ public class WhipperSnapperConfiguration
     public string ModelDirectory { get; set; } = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "models");
     public bool Translate { get; set; } = false;
     public bool Debug { get; set; }
-    public whisper_sampling_strategy Strategy { get; set; } = whisper_sampling_strategy.WHISPER_SAMPLING_BEAM_SEARCH;
     public int Threads { get; set; } = 4;
 }

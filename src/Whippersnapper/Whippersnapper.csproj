@@ -7,8 +7,6 @@
 
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
-        <PublishReadyToRun>true</PublishReadyToRun>
-        <PublishSingleFile>true</PublishSingleFile>
         <SelfContained>true</SelfContained>
         <UserSecretsId>652c9c20-9f1f-470c-80dd-d67aba3a69af</UserSecretsId>
         <AnalysisLevel>latest-all</AnalysisLevel>
@@ -45,10 +43,11 @@
         <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-        <PackageReference Include="Whisper.Runtime" Version="1.4.2001" />
         <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
             <PrivateAssets>All</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Whisper.net" Version="1.4.6" />
+        <PackageReference Include="Whisper.net.Runtime.Cublas" Version="1.4.6" />
     </ItemGroup>
 
     <ItemGroup>
