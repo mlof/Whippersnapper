@@ -29,6 +29,7 @@ public class TranscriptionHandler : IRequestHandler<TranscriptionRequest, Transc
 
     public async Task<TranscriptionResult> Handle(TranscriptionRequest request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Transcribing {Filepath}, with translate: {ShouldTranslate}", request.Filepath, request.ShouldTranslate);
         var filePath = request.Filepath;
 
         var sw = Stopwatch.StartNew();
@@ -77,7 +78,6 @@ public class TranscriptionHandler : IRequestHandler<TranscriptionRequest, Transc
 
         processorBuilder.WithBeamSearchSamplingStrategy();
 
-        processorBuilder.WithLanguageDetection();
         processorBuilder.WithProbabilities();
 
         return processorBuilder.Build();
