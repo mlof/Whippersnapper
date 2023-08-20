@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+<Project Sdk="Microsoft.NET.Sdk.Worker">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -26,7 +26,7 @@
         <PackageReference Include="ByteSize" Version="2.1.1" />
         <PackageReference Include="Concentus" Version="1.1.7" />
         <PackageReference Include="Concentus.OggFile" Version="1.0.4" />
-        <PackageReference Include="Discord.Net" Version="3.11.0" />
+        <PackageReference Include="Discord.Net" Version="3.12.0" />
         <PackageReference Include="Humanizer.Core" Version="2.14.1" />
         <PackageReference Include="MediatR" Version="12.1.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.9" />
