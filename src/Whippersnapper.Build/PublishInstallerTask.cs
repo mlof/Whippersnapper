@@ -13,13 +13,13 @@ public class PublishInstallerTask : FrostingTask<BuildContext>
     public override void Run(BuildContext context)
     {
         context.Information("Publishing Installer...");
-        context.DotNetPublish(context.InstallerPath.ToString(), new DotNetPublishSettings()
+        context.DotNetPublish(context.InstallerPath.ToString(), new DotNetPublishSettings
         {
             Configuration = context.MsBuildConfiguration,
             Runtime = context.RuntimeIdentifier,
 
             NoLogo = true,
-            Verbosity = DotNetVerbosity.Detailed,
+            Verbosity = DotNetVerbosity.Detailed
         });
 
         var artifactDirectory = context.ArtifactPath.Combine(context.Version);

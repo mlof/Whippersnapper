@@ -21,13 +21,14 @@ namespace Whippersnapper.Tests
 
         private static async Task EnsureBaseModelExists()
         {
+            var modelName = "ggml-base.bin";
             var loggerFactory = new LoggerFactory();
             loggerFactory.AddProvider(new DebugLoggerProvider())
                 ;
             var modelManagerLogger = loggerFactory.CreateLogger<ModelManager>();
             var options = new OptionsWrapper<WhipperSnapperConfiguration>(new WhipperSnapperConfiguration());
             var modelManager = new ModelManager(modelManagerLogger, options);
-            await modelManager.EnsureModelExists();
+            await modelManager.EnsureModelExists(modelName);
         }
     }
 }

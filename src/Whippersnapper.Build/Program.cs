@@ -1,6 +1,7 @@
 using Cake.Frosting;
 
 namespace Whippersnapper.Build;
+
 public static class Program
 {
     public static int Main(string[] args)

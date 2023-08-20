@@ -1,9 +1,8 @@
 ﻿using Concentus.Oggfile;
 using Concentus.Structs;
 using NAudio.Wave;
-using Whisper.Runtime;
 
-namespace Whippersnapper.Audio;
+namespace Whippersnapper.Messaging.Audio;
 
 public static class AudioConverter
 {
@@ -46,7 +45,8 @@ public static class AudioConverter
     private static async Task ConvertWavToSampleRate(string tempFileName, string wavFilePath)
     {
         await using var wavFileReader = new WaveFileReader(tempFileName);
-        var targetSampleRate = WhisperRuntime.WHISPER_SAMPLE_RATE;
+        // 16Khz
+        var targetSampleRate = 16000;
 
         using var resampler = new MediaFoundationResampler(wavFileReader, new WaveFormat(targetSampleRate, 1));
 

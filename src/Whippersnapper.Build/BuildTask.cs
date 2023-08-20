@@ -12,14 +12,12 @@ public class BuildTask : FrostingTask<BuildContext>
     public override void Run(BuildContext context)
     {
         context.Information("Building...");
-        var buildSettings = new DotNetBuildSettings()
+        var buildSettings = new DotNetBuildSettings
         {
             Configuration = context.MsBuildConfiguration,
-            Runtime = context.RuntimeIdentifier,
+            Runtime = context.RuntimeIdentifier
         };
         context.DotNetBuild(context.ProjectPath.ToString(), buildSettings);
         context.DotNetBuild(context.TestPath.ToString(), buildSettings);
-
-
     }
 }

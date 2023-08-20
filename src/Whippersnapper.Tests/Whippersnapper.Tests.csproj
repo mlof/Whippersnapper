@@ -7,6 +7,7 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Whippersnapper.Build\Whippersnapper.Build.csproj" />
     <ProjectReference Include="..\Whippersnapper\Whippersnapper.csproj" />
   </ItemGroup>
 

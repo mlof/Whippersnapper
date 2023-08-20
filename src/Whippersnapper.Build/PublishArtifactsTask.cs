@@ -6,7 +6,6 @@ using Cake.Frosting;
 namespace Whippersnapper.Build;
 
 [TaskName("PublishArtifacts")]
-
 [IsDependentOn(typeof(PublishTask))]
 [IsDependentOn(typeof(PublishInstallerTask))]
 public class PublishArtifactsTask : FrostingTask<BuildContext>
@@ -17,8 +16,6 @@ public class PublishArtifactsTask : FrostingTask<BuildContext>
 
 
         var artifactDirectory = context.ArtifactPath.Combine(context.Version);
-
-
 
 
         if (context.GitHubActions().IsRunningOnGitHubActions)
