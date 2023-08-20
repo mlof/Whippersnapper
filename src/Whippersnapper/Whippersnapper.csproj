@@ -4,7 +4,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-
+<RuntimeIdentifier>linux-x64</RuntimeIdentifier>
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
         <SelfContained>true</SelfContained>
@@ -56,7 +56,7 @@
             <PrivateAssets>All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Whisper.net" Version="1.4.6" />
-        <PackageReference Include="Whisper.net.Runtime.Cublas" Version="1.4.6" />
+        <PackageReference Include="Whisper.net.Runtime" Version="1.4.6" />
     </ItemGroup>
 
     <ItemGroup>
