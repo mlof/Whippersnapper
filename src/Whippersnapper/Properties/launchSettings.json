@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Whippersnapper": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

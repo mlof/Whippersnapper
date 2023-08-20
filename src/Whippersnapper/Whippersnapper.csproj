@@ -13,6 +13,8 @@
         <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
         <AnalysisLevel>latest-recommended</AnalysisLevel>
         <ServerGarbageCollection>true</ServerGarbageCollection>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DockerfileContext>..\..</DockerfileContext>
 
     </PropertyGroup>
 
@@ -42,6 +44,7 @@
         <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.1" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="7.0.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
         <PackageReference Include="NAudio" Version="2.1.0" />
         <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
