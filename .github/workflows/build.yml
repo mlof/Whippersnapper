@@ -25,9 +25,8 @@ jobs:
       uses: gittools/actions/gitversion/execute@v0
     - name: Build
       run: dotnet build --no-restore --configuration Release
-    #- name: Test
-    #  run: dotnet test --no-build --verbosity normal
-  
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
     - name: Publish windows-x64
       run: dotnet publish --configuration Release --output ./publish/windows-x64 --runtime win-x64 ./Whippersnapper/Whippersnapper.csproj
 
