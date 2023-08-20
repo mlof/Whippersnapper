@@ -52,9 +52,6 @@
         <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-        <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
-            <PrivateAssets>All</PrivateAssets>
-        </PackageReference>
         <PackageReference Include="Whisper.net" Version="1.4.6" />
         <PackageReference Include="Whisper.net.Runtime" Version="1.4.6" />
     </ItemGroup>
