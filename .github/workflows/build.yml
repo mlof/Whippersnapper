@@ -34,6 +34,11 @@ jobs:
     - name: Zip windows-x64
       run: 7z a -tzip ./publish/windows-x64.zip ./publish/windows-x64
 
+    - name: Publish linux-x64
+      run: dotnet publish --configuration Release --output ./publish/linux-x64 --runtime linux-x64 ./Whippersnapper/Whippersnapper.csproj
+
+    - name: Zip linux-x64
+      run: 7z a -tzip ./publish/linux-x64.zip ./publish/linux-x64
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
@@ -53,6 +58,13 @@ jobs:
         asset_path: ./publish/windows-x64.zip
         asset_name: Whippersnapper-windows-x64.zip
         asset_content_type: application/zip
-
-  
-      
+    - name: Upload linux-x64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./publish/linux-x64.zip
+        asset_name: Whippersnapper-linux-x64.zip
+        asset_content_type: application/zip
+     
