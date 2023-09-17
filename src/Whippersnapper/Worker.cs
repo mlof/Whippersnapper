@@ -12,12 +12,12 @@ namespace Whippersnapper;
 internal class Worker : BackgroundService
 {
     private readonly DiscordSocketClient _client;
-    private readonly ILogger<Worker> _logger;
     private readonly InteractionHandler _interactionHandler;
+    private readonly ILogger<Worker> _logger;
     private readonly string _modelFile;
     private readonly IModelManager _modelManager;
-    private readonly string? _token;
     private readonly IServiceScopeFactory _serviceScope;
+    private readonly string? _token;
 
     public Worker(ILogger<Worker> logger,
         IModelManager modelManager,
@@ -42,6 +42,17 @@ internal class Worker : BackgroundService
         StatusMessage = options.Value.StatusMessage;
     }
 
+    private string? StatusMessage { get; }
+
+    private IMediator Mediator
+    {
+        get
+        {
+            var scope = _serviceScope.CreateScope();
+            return scope.ServiceProvider.GetRequiredService<IMediator>();
+        }
+    }
+
     private async Task ClientReady()
     {
         _logger.LogInformation("Client ready");
@@ -51,8 +62,6 @@ internal class Worker : BackgroundService
             await _client.SetActivityAsync(new Game(StatusMessage));
         }
     }
-
-    private string? StatusMessage { get; }
 
     private async Task MessageReceivedAsync(SocketMessage arg)
     {
@@ -64,7 +73,8 @@ internal class Worker : BackgroundService
 
                 return;
             }
-            else if (arg.Attachments.Count > 1)
+
+            if (arg.Attachments.Count > 1)
             {
                 _logger.LogError("Received voice message with more than one attachment. What's going on?");
 
@@ -84,15 +94,6 @@ internal class Worker : BackgroundService
     {
         _logger.LogInformation(arg.ToString());
         return Task.CompletedTask;
-    }
-
-    private IMediator Mediator
-    {
-        get
-        {
-            var scope = _serviceScope.CreateScope();
-            return scope.ServiceProvider.GetRequiredService<IMediator>();
-        }
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

@@ -1,7 +1,7 @@
-﻿using Discord;
+﻿using System.Diagnostics;
+using Discord;
 using MediatR;
 using Microsoft.Extensions.Options;
-using System.Diagnostics;
 using Whippersnapper.Configuration;
 using Whippersnapper.Messaging.Attachments;
 using Whippersnapper.Messaging.Audio;

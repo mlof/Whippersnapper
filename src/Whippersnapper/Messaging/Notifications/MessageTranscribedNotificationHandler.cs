@@ -44,7 +44,7 @@ public class MessageTranscribedNotificationHandler : INotificationHandler<Messag
             ChannelId = guildChannel.Id,
             ChannelName = guildChannel.Name,
 
-            CreatedAt = socketUserMessage.CreatedAt.UtcDateTime,
+            CreatedAt = socketUserMessage.CreatedAt.UtcDateTime
         };
 
         // get the guild 

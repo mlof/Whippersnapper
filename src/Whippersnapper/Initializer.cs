@@ -13,13 +13,19 @@ public class Initializer : IDisposable
 
     public Initializer(IServiceProvider serviceProvider)
     {
-        this._scope = serviceProvider.CreateScope();
+        _scope = serviceProvider.CreateScope();
         var options = _scope.ServiceProvider.GetRequiredService<IOptions<WhipperSnapperConfiguration>>();
 
-        this.Options = options.Value;
+        Options = options.Value;
     }
 
-    private WhipperSnapperConfiguration Options { get; set; }
+    private WhipperSnapperConfiguration Options { get; }
+
+
+    public void Dispose()
+    {
+        _scope.Dispose();
+    }
 
 
     public async Task Initialize()
@@ -58,11 +64,5 @@ public class Initializer : IDisposable
         Directory.CreateDirectory(Options.ModelDirectory);
 
         Directory.CreateDirectory(Path.GetDirectoryName(WhippersnapperContext.FilePath));
-    }
-
-
-    public void Dispose()
-    {
-        _scope.Dispose();
     }
 }

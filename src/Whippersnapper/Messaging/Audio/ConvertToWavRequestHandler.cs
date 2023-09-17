@@ -15,7 +15,6 @@ public class ConvertToWavRequestHandler : IRequestHandler<ConvertToWavRequest, C
     {
         _fileDirectory = whipperSnapperConfiguration.Value.FileDirectory;
         Directory.CreateDirectory(_fileDirectory);
-
     }
 
     public async Task<ConvertToWavResponse> Handle(ConvertToWavRequest request, CancellationToken cancellationToken)

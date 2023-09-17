@@ -5,17 +5,13 @@ VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{C057F461-D474-46D4-A2DF-CF42BC6D3C07}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whippersnapper", "src\Whippersnapper\Whippersnapper.csproj", "{277491D8-A435-4A5D-A528-6F9380A6FD60}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whippersnapper.Tests", "src\Whippersnapper.Tests\Whippersnapper.Tests.csproj", "{B7918E7E-9F31-486B-AE0B-8685CEB1B5CD}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{44004E25-4D36-40F8-8D9F-243034EFD1E7}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build.yml = .github\workflows\build.yml
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

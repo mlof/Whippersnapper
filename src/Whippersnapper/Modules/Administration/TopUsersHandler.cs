@@ -19,10 +19,10 @@ public class TopUsersHandler : IRequestHandler<TopUsersRequest, TopUsersResponse
             .Where(transcription => transcription.GuildId == request.GuildId)
             .GroupBy(x => x.Author)
             .Select(x => new UserUsage { Author = x.Key, Count = x.Count() })
-            .OrderByDescending(x => x.Count).Take(10).ToListAsync(cancellationToken: cancellationToken);
+            .OrderByDescending(x => x.Count).Take(10).ToListAsync(cancellationToken);
 
 
-        return new TopUsersResponse()
+        return new TopUsersResponse
         {
             Authors = topAuthors
         };
