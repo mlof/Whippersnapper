@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Whippersnapper.Build\Whippersnapper.Build.csproj" />
     <ProjectReference Include="..\Whippersnapper\Whippersnapper.csproj" />
   </ItemGroup>
 
