@@ -57,11 +57,10 @@
         <PackageReference Include="Whisper.net" Version="1.4.7" />
 
     </ItemGroup>
-    <ItemGroup Condition="'$(CudaBuild)' == 'cublas'">
+    <ItemGroup Condition="'$(GgmlRuntime)' == 'cublas'">
         <PackageReference Include="Whisper.net.Runtime.Cublas" Version="1.4.7" />
     </ItemGroup>
-    <ItemGroup Condition="'$(CudaBuild)' == 'cpu'">
-
+    <ItemGroup Condition="'$(GgmlRuntime)' == 'cpu'">
         <PackageReference Include="Whisper.net.Runtime" Version="1.4.7" />
 
     </ItemGroup>
