@@ -13,7 +13,7 @@
         <AnalysisLevel>latest-recommended</AnalysisLevel>
         <ServerGarbageCollection>true</ServerGarbageCollection>
 
-        <CudaBuild>True</CudaBuild>
+        <GgmlRuntime>cpu</GgmlRuntime>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>..\..</DockerfileContext>
     </PropertyGroup>
@@ -55,13 +55,12 @@
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 
         <PackageReference Include="Whisper.net" Version="1.4.7" />
-        <PackageReference Include="Whisper.net.Runtime" Version="1.4.7" />
+
+    </ItemGroup>
+    <ItemGroup Condition="'$(CudaBuild)' == 'cublas'">
         <PackageReference Include="Whisper.net.Runtime.Cublas" Version="1.4.7" />
     </ItemGroup>
-    <ItemGroup Condition="'$(CudaBuild)' == 'True'">
-        <PackageReference Include="Whisper.net.Runtime.Cublas" Version="1.4.7" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(CudaBuild)' != 'True'">
+    <ItemGroup Condition="'$(CudaBuild)' == 'cpu'">
 
         <PackageReference Include="Whisper.net.Runtime" Version="1.4.7" />
 

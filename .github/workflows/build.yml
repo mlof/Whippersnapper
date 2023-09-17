@@ -5,9 +5,10 @@ on:
     branches: [ "master" ]
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        GGML_RUNTIME: ["cpu", "cublas"]
     steps:
     - uses: actions/checkout@v3
     - uses: docker/login-action@v1
@@ -17,8 +18,13 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Build the Docker image
       uses : docker/build-push-action@v5
+      env:
+        GGML_RUNTIME: ${{ matrix.GGML_RUNTIME }}
       with:
         context: .
         file: ./src/Whippersnapper/Dockerfile
         push: true
-        tags: ghcr.io/mlof/whippersnapper:latest
+        tags: ghcr.io/whippersnapper/whippersnapper:latest-${{ matrix.GGML_RUNTIME }}
+
+        
+        

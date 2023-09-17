@@ -12,7 +12,8 @@ WORKDIR "/src/src/Whippersnapper"
 RUN dotnet build "Whippersnapper.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Whippersnapper.csproj" -c Release -o /app/publish /p:UseAppHost=true
+ENV GgmlRuntime=cpu
+RUN dotnet publish "Whippersnapper.csproj" -c Release -o /app/publish /p:UseAppHost=true /p:GgmlRuntime=${GgmlRuntime}
 
 FROM base AS final
 WORKDIR /app
