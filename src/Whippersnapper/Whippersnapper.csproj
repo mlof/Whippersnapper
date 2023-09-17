@@ -13,6 +13,7 @@
         <AnalysisLevel>latest-recommended</AnalysisLevel>
         <ServerGarbageCollection>true</ServerGarbageCollection>
 
+        <CudaBuild>True</CudaBuild>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>..\..</DockerfileContext>
     </PropertyGroup>
@@ -55,7 +56,17 @@
 
         <PackageReference Include="Whisper.net" Version="1.4.7" />
         <PackageReference Include="Whisper.net.Runtime" Version="1.4.7" />
+        <PackageReference Include="Whisper.net.Runtime.Cublas" Version="1.4.7" />
     </ItemGroup>
+    <ItemGroup Condition="'$(CudaBuild)' == 'True'">
+        <PackageReference Include="Whisper.net.Runtime.Cublas" Version="1.4.7" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(CudaBuild)' != 'True'">
+
+        <PackageReference Include="Whisper.net.Runtime" Version="1.4.7" />
+
+    </ItemGroup>
+
 
     <ItemGroup>
         <None Update="appsettings.json">
