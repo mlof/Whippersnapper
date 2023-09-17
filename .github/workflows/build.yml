@@ -18,7 +18,7 @@ jobs:
     - name: Build the Docker image
       uses : docker/build-push-action@v5
       with:
-            context: .
-            file: ./src/Whippersnapper/Dockerfile
-            push: true
-            tags: ghcr.io/${{ github.repository }}:latest
+        context: .
+        file: ./src/Whippersnapper/Dockerfile
+        push: true
+        tags: ghcr.io/mlof/whippersnapper:latest
