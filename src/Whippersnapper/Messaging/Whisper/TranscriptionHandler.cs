@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using System.Diagnostics;
+using System.Text;
+using MediatR;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
-using System.Diagnostics;
-using System.Text;
 using Whippersnapper.Configuration;
 using Whisper.net;
 
@@ -10,8 +10,8 @@ namespace Whippersnapper.Messaging.Whisper;
 
 public class TranscriptionHandler : IRequestHandler<TranscriptionRequest, TranscriptionResult>
 {
-    private readonly ILogger<TranscriptionHandler> _logger;
     private readonly WhisperFactory _factory;
+    private readonly ILogger<TranscriptionHandler> _logger;
     private readonly int _threads;
 
     public TranscriptionHandler(
@@ -20,7 +20,7 @@ public class TranscriptionHandler : IRequestHandler<TranscriptionRequest, Transc
         WhisperFactory factory)
     {
         _logger = logger;
-        this._factory = factory;
+        _factory = factory;
 
 
         _threads = options.Value.Threads;
@@ -29,7 +29,8 @@ public class TranscriptionHandler : IRequestHandler<TranscriptionRequest, Transc
 
     public async Task<TranscriptionResult> Handle(TranscriptionRequest request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Transcribing {Filepath}, with translate: {ShouldTranslate}", request.Filepath, request.ShouldTranslate);
+        _logger.LogInformation("Transcribing {Filepath}, with translate: {ShouldTranslate}", request.Filepath,
+            request.ShouldTranslate);
         var filePath = request.Filepath;
 
         var sw = Stopwatch.StartNew();
@@ -53,7 +54,6 @@ public class TranscriptionHandler : IRequestHandler<TranscriptionRequest, Transc
 
             await foreach (var segmentData in processor.ProcessAsync(test, cancellationToken))
             {
-
                 sb.Append(segmentData.Text);
                 segments.Add(segmentData);
             }
@@ -82,7 +82,6 @@ public class TranscriptionHandler : IRequestHandler<TranscriptionRequest, Transc
 
         return processorBuilder.Build();
     }
-
 
 
     private static float? GetNextFrame(WaveStream stream)

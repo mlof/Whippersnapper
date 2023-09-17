@@ -1,6 +1,4 @@
-﻿
-
-namespace Whippersnapper.Configuration;
+﻿namespace Whippersnapper.Configuration;
 
 public class WhipperSnapperConfiguration
 {

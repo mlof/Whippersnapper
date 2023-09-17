@@ -6,8 +6,8 @@ namespace Whippersnapper.Messaging.Attachments;
 
 public class DownloadAttachmentRequestHandler : IRequestHandler<DownloadAttachmentRequest, DownloadAttachmentResponse>
 {
-    private readonly IHttpClientFactory _httpClientFactory;
     private readonly string _fileDirectory;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public DownloadAttachmentRequestHandler(IHttpClientFactory httpClientFactory,
         IOptions<WhipperSnapperConfiguration> whipperSnapperConfiguration

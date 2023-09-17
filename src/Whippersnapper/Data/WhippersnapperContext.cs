@@ -4,8 +4,6 @@ namespace Whippersnapper.Data;
 
 public class WhippersnapperContext : DbContext
 {
-    public static string FilePath => Path.Join(AppDomain.CurrentDomain.BaseDirectory, "data", "whippersnapper.db");
-
     public WhippersnapperContext(DbContextOptions<WhippersnapperContext> options) : base(options)
     {
     }
@@ -13,6 +11,8 @@ public class WhippersnapperContext : DbContext
     public WhippersnapperContext()
     {
     }
+
+    public static string FilePath => Path.Join(AppDomain.CurrentDomain.BaseDirectory, "data", "whippersnapper.db");
 
     public DbSet<Transcription> Transcriptions { get; set; } = null!;
 }

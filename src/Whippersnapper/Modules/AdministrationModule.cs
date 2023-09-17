@@ -1,9 +1,9 @@
-﻿using Discord;
+﻿using System.Diagnostics;
+using System.Text;
+using Discord;
 using Discord.Interactions;
 using Humanizer;
 using MediatR;
-using System.Diagnostics;
-using System.Text;
 using Whippersnapper.Modules.Administration;
 
 namespace Whippersnapper.Modules;

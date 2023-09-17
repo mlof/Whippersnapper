@@ -1,6 +1,7 @@
 ﻿using Concentus.Oggfile;
 using Concentus.Structs;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace Whippersnapper.Messaging.Audio;
 
@@ -48,8 +49,10 @@ public static class AudioConverter
         // 16Khz
         var targetSampleRate = 16000;
 
-        using var resampler = new MediaFoundationResampler(wavFileReader, new WaveFormat(targetSampleRate, 1));
+        var sampleProvider = wavFileReader.ToSampleProvider();
 
-        WaveFileWriter.CreateWaveFile16(wavFilePath, resampler.ToSampleProvider());
+        var resampler = new WdlResamplingSampleProvider(sampleProvider, targetSampleRate);
+
+        WaveFileWriter.CreateWaveFile16(wavFilePath, resampler);
     }
 }
