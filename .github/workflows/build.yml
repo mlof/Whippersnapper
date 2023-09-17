@@ -24,7 +24,7 @@ jobs:
         context: .
         file: ./src/Whippersnapper/Dockerfile
         push: true
-        tags: ghcr.io/whippersnapper/whippersnapper:latest-${{ matrix.GGML_RUNTIME }}
+        tags: ghcr.io/mlof/whippersnapper:latest-${{ matrix.GGML_RUNTIME }}
 
         
         
